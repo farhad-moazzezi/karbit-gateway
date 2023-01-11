@@ -1,0 +1,17 @@
+#define variable
+api:
+  url:
+    /api
+
+# gateway routing configuration
+spring:
+  cloud:
+    gateway:
+      routes:
+        - id: user-management-route
+          uri: ${user-manager.url} # internal url path of target microservice
+          predicates:
+            - Path=${api.url}/user/** # predicate that help spring to choose appropriate routing solution
+          filters:
+            #Rewrite {requested url} to {target url}
+            - RewritePath=${api.url}/user/(?<segment>.*) , /user/$\{segment}
