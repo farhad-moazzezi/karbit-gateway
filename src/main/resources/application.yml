@@ -15,3 +15,9 @@ spring:
           filters:
             #Rewrite {requested url} to {target url}
             - RewritePath=${api.url}/user/(?<segment>.*) , /user/$\{segment}
+        - id: article-manager-route
+          uri: ${article-manager.url}
+          predicates:
+            - Path=${api.url}/article/**
+          filters:
+            - RewritePath=${api.url}/article/(?<segment>.*) , /doc/article/$\{segment}

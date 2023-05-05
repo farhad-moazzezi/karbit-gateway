@@ -1,7 +1,9 @@
 package org.karbit.gateway.auth.client;
 
 import lombok.AllArgsConstructor;
-import org.karbit.user.common.dto.response.AuthResp;
+import org.karbit.skeleton.constant.Agent;
+import org.karbit.skeleton.constant.Header;
+import org.karbit.user.common.dto.response.AuthFullResponse;
 import reactor.core.publisher.Mono;
 
 import org.springframework.context.annotation.PropertySource;
@@ -18,8 +20,8 @@ public class UserManagerServiceImpl implements UserManagementService {
 	private final WebClient.Builder webClientBuilder;
 
 	@Override
-	public Mono<AuthResp> authentication(String token) {
+	public Mono<AuthFullResponse> authentication(String token) {
 		WebClient webClient = webClientBuilder.baseUrl(userManagerProps.getUrl()).build();
-		return webClient.post().uri("/auth").header("Token", token).retrieve().bodyToMono(AuthResp.class);
+		return webClient.post().uri("/auth").header(Header.TOKEN, token).header(Header.AGENT, Agent.GATEWAY).retrieve().bodyToMono(AuthFullResponse.class);
 	}
 }
