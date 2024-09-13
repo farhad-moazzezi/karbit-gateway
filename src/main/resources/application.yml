@@ -21,3 +21,9 @@ spring:
             - Path=${api.url}/article/**
           filters:
             - RewritePath=${api.url}/article/(?<segment>.*) , /doc/article/$\{segment}
+        - id: article-manager-route
+          uri: ${tag-manager.url}
+          predicates:
+            - Path=${api.url}/tag/**
+          filters:
+            - RewritePath=${api.url}/tag/(?<segment>.*) , /tag/$\{segment}

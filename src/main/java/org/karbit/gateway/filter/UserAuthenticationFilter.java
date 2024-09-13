@@ -8,6 +8,7 @@ import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.karbit.gateway.auth.client.UserManagementService;
+import org.karbit.gateway.config.AuthenticationConfiguration;
 import org.karbit.skeleton.constant.Header;
 import org.karbit.user.common.dto.response.AuthFullResponse;
 import reactor.core.publisher.Mono;
@@ -29,10 +30,23 @@ public class UserAuthenticationFilter implements GlobalFilter {
 
 	private final UserManagementService userService;
 
+	private final AuthenticationConfiguration authenticationConfiguration;
+
 	@Override
 	public Mono<Void> filter(ServerWebExchange exchange, GatewayFilterChain chain) {
-		ServerHttpRequest request = exchange.getRequest();
 		log.info(exchange.getRequest().getHeaders().toString());
+		if (isAuthenticationEnabled()) {
+			return authentice(exchange, chain);
+		}
+		return chain.filter(exchange);
+	}
+
+	private boolean isAuthenticationEnabled() {
+		return authenticationConfiguration.getEnabled();
+	}
+
+	private Mono<Void> authentice(ServerWebExchange exchange, GatewayFilterChain chain) {
+		ServerHttpRequest request = exchange.getRequest();
 		if (Boolean.FALSE.equals(UNPROTECTED_PATH.stream().anyMatch(path -> path.matches(request.getPath().toString())))) {
 			try {
 				return checkAuthentication(request.getHeaders()).flatMap(authResp -> {

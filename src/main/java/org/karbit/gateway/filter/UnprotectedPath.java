@@ -7,7 +7,7 @@ public enum UnprotectedPath {
 	LOGOUT_URL("/user/auth/logout"),
 	LOGIN_URL("/user/auth/login"),
 	SIGNUP_URL("/user/auth/signup"),
-	GET_ARTICLE_SUMMARY_URL("doc/article/summary/**");
+	GET_ARTICLE_SUMMARY_URL("/doc/article/summary/**");
 
 
 	UnprotectedPath(String path) {

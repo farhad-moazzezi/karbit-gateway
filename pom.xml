@@ -7,6 +7,7 @@
 	<groupId>org.karbit.gateway</groupId>
 	<artifactId>gateway</artifactId>
 	<version>1.0.0-SNAPSHOT</version>
+	<packaging>jar</packaging>
 
 	<parent>
 		<groupId>org.springframework.boot</groupId>
@@ -15,7 +16,6 @@
 	</parent>
 
 	<properties>
-		<java.version>17</java.version>
 		<user.manager.version>1.0.0-SNAPSHOT</user.manager.version>
 		<spring.cloud.sleuth.version>3.1.3</spring.cloud.sleuth.version>
 		<spring-cloud.version>2021.0.5</spring-cloud.version>
@@ -74,4 +74,23 @@
 			<artifactId>constant</artifactId>
 		</dependency>
 	</dependencies>
+
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.springframework.boot</groupId>
+				<artifactId>spring-boot-maven-plugin</artifactId>
+				<configuration>
+					<executable>true</executable>
+				</configuration>
+				<executions>
+					<execution>
+						<goals>
+							<goal>repackage</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+		</plugins>
+	</build>
 </project>
