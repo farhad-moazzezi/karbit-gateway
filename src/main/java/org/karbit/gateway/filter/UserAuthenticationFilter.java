@@ -26,8 +26,6 @@ import org.springframework.web.server.ServerWebExchange;
 @RequiredArgsConstructor
 public class UserAuthenticationFilter implements GlobalFilter {
 
-	private static final Set<String> UNPROTECTED_PATH = Arrays.stream(UnprotectedPath.values()).map(UnprotectedPath::getPath).collect(Collectors.toSet());
-
 	private final UserManagementService userService;
 
 	private final AuthenticationConfiguration authenticationConfiguration;
@@ -36,7 +34,7 @@ public class UserAuthenticationFilter implements GlobalFilter {
 	public Mono<Void> filter(ServerWebExchange exchange, GatewayFilterChain chain) {
 		log.info(exchange.getRequest().getHeaders().toString());
 		if (isAuthenticationEnabled()) {
-			return authentice(exchange, chain);
+			return authentic(exchange, chain);
 		}
 		return chain.filter(exchange);
 	}
@@ -45,9 +43,9 @@ public class UserAuthenticationFilter implements GlobalFilter {
 		return authenticationConfiguration.getEnabled();
 	}
 
-	private Mono<Void> authentice(ServerWebExchange exchange, GatewayFilterChain chain) {
+	private Mono<Void> authentic(ServerWebExchange exchange, GatewayFilterChain chain) {
 		ServerHttpRequest request = exchange.getRequest();
-		if (Boolean.FALSE.equals(UNPROTECTED_PATH.stream().anyMatch(path -> path.matches(request.getPath().toString())))) {
+		if (Boolean.FALSE.equals(UnprotectedPath.isPathUnprotected(request.getPath().toString()))) {
 			try {
 				return checkAuthentication(request.getHeaders()).flatMap(authResp -> {
 					ServerWebExchange webExchange = exchange.mutate()
@@ -71,7 +69,8 @@ public class UserAuthenticationFilter implements GlobalFilter {
 		if (Objects.isNull(headers.get(Header.TOKEN))) {
 			throw new IllegalAccessException();
 		}
-		String token = headers.get(Header.TOKEN).stream().findFirst().orElse(null);
+		String token = Objects.requireNonNull(headers.get(Header.TOKEN))
+				.stream().findFirst().orElse(null);
 		return userService.authentication(token);
 	}
 }
